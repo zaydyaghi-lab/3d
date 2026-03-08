@@ -157,18 +157,11 @@
     import { DRACOLoader }         from 'three/addons/loaders/DRACOLoader.js';
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  ★  PASTE YOUR GITHUB RAW URL HERE  ★
-    //
-    //  How to get this URL:
-    //    1. Upload your .glb to this repo: https://github.com/zaydyaghi-lab/3d/upload/main
-    //    2. Click the .glb file in the repo file list
-    //    3. Click the "Raw" button (top-right of the file view)
-    //    4. Copy the URL from your browser address bar – it will look like:
-    //       https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb
-    //    5. Replace YOUR-FILE-NAME below with the name of your uploaded file
+    //  Model: particle_ai_brain (2).glb
+    //  Repo:  https://github.com/zaydyaghi-lab/3d
     // ══════════════════════════════════════════════════════════════════════════
     const MODEL_URL =
-      'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb';
+      'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/particle_ai_brain%20(2).glb';
 
     // ── DOM references ─────────────────────────────────────────────────────────
     const container      = document.getElementById('canvas-container');
@@ -295,20 +288,13 @@
         loadingOverlay.classList.add('hidden');
 
         // Build a helpful error message for the user
-        let msg = 'An unknown error occurred while loading the model.';
-        if (MODEL_URL.includes('YOUR-FILE-NAME')) {
-          msg = 'It looks like you haven\'t replaced the filename yet. '
-              + 'Open index.html, find the MODEL_URL variable near the top of '
-              + 'the <script> section (look for "YOUR-FILE-NAME"), and replace '
-              + 'it with the name of the .glb file you uploaded to this repo.';
-        } else {
-          msg = `Could not fetch: ${MODEL_URL}\n\n`
-              + 'Common causes:\n'
-              + '• The URL is incorrect – double-check it in your browser.\n'
-              + '• The file is not publicly accessible.\n'
-              + '• CORS is blocked – try serving this file from a local server '
-              + '(see README for instructions).';
-        }
+        const msg = `Could not fetch: ${MODEL_URL}\n\n`
+            + 'Common causes:\n'
+            + '• The file may not be on the main branch yet – check the repo.\n'
+            + '• The URL is incorrect – double-check it in your browser.\n'
+            + '• The file is not publicly accessible.\n'
+            + '• CORS is blocked – try serving this file from a local server '
+            + '(see README for instructions).';
 
         errorMessage.textContent = msg;
         errorOverlay.classList.add('visible');

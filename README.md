@@ -21,50 +21,32 @@ Features:
 
 ---
 
-## Step 2 – Upload your `.glb` file
+## Step 2 – ✅ `.glb` file already uploaded
 
-### ➡️ [Click here to upload your .glb file now](https://github.com/zaydyaghi-lab/3d/upload/main)
+Your model **`particle_ai_brain (2).glb`** is already in this repository.  
+View it here: [particle_ai_brain (2).glb](https://github.com/zaydyaghi-lab/3d/blob/main/particle_ai_brain%20(2).glb)
 
-That link takes you straight to the upload page for this repository. Just:
-
-1. Drag your `.glb` file onto the upload area (or click **choose your files**).
-2. Scroll down and click **Commit changes**.
-
-> **Not working?** Make sure you are signed into GitHub first, then try the link again.
+Want to swap it for a different file? Upload here:  
+➡️ [https://github.com/zaydyaghi-lab/3d/upload/main](https://github.com/zaydyaghi-lab/3d/upload/main)
 
 ---
 
-## Step 3 – Get the raw GitHub URL
+## Step 3 – ✅ URL already set in `index.html`
 
-1. After uploading, click on the `.glb` file in [this repository](https://github.com/zaydyaghi-lab/3d).
-2. Click the **Raw** button in the top-right of the file view.
-3. Copy the URL from your browser's address bar.  
-   For this repository it will look like:
-   ```
-   https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb
-   ```
-   (just replace `YOUR-FILE-NAME` with the actual name of your file)
-4. Keep this URL handy – you will paste it into `index.html` next.
+`index.html` is already pointing at your uploaded model:
+
+```js
+const MODEL_URL =
+  'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/particle_ai_brain%20(2).glb';
+```
+
+No editing needed — skip straight to Step 5 to test it locally, or Step 6 to publish it.
 
 ---
 
-## Step 4 – Paste your URL into `index.html`
+## Step 4 – (Already done for you)
 
-Open `index.html` in any text editor and find this line near the top of the `<script>` block:
-
-```js
-const MODEL_URL =
-  'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb';
-```
-
-Replace `YOUR-FILE-NAME` with the actual name of your uploaded file, for example:
-
-```js
-const MODEL_URL =
-  'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/robot.glb';
-```
-
-Save the file.
+If you ever replace the `.glb` with a different file, open `index.html`, find the `MODEL_URL` line above, and update the filename.
 
 ---
 

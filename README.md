@@ -11,74 +11,20 @@ Features:
 
 ---
 
-## ✅ Everything is already set up — here's what to do next
+## 🌐 View your 3D model online
 
-Your model (`particle_ai_brain (2).glb`) is uploaded and `index.html` already points to it.  
-You just need two quick steps to see it live on the web:
+**➡️ [https://zaydyaghi-lab.github.io/3d/](https://zaydyaghi-lab.github.io/3d/)**
 
-### Step A – Merge the pull request
-
-1. Go to **[Pull requests](https://github.com/zaydyaghi-lab/3d/pulls)** in this repo.
-2. Open the open PR (titled something like *"Wire up particle_ai_brain…"*).
-3. Click **Merge pull request** → **Confirm merge**.
-
-This puts the finished `index.html` onto the `main` branch alongside your `.glb`.
-
-### Step B – Turn on GitHub Pages
+The site deploys automatically via GitHub Actions whenever you push to `main`.  
+If GitHub Pages isn't enabled yet, do it once:
 
 1. Go to **Settings** → **Pages** (left sidebar of this repo).
-2. Under **Source**, choose **Deploy from a branch**.
-3. Pick **main** branch and **/ (root)** folder, then click **Save**.
-4. Wait ~60 seconds, then visit:
-
-```
-https://zaydyaghi-lab.github.io/3d/
-```
-
-Your interactive 3D brain model will be live at that URL. 🎉
+2. Under **Source**, choose **GitHub Actions**.
+3. Click **Save** — then push any commit (or re-run the *Deploy to GitHub Pages* workflow).
 
 ---
 
-## Step 1 – Create a GitHub repository
-
-> If you already have a repository, skip to Step 2.
-
-1. Go to [github.com](https://github.com) and sign in (create a free account if needed).
-2. Click the **+** button in the top-right corner → **New repository**.
-3. Give it a name (e.g. `my-3d-model`), set it to **Public**, tick **Add a README file**, then click **Create repository**.
-
----
-
-## Step 2 – ✅ `.glb` file already uploaded
-
-Your model **`particle_ai_brain (2).glb`** is already in this repository.  
-View it here: [particle_ai_brain (2).glb](https://github.com/zaydyaghi-lab/3d/blob/main/particle_ai_brain%20(2).glb)
-
-Want to swap it for a different file? Upload here:  
-➡️ [https://github.com/zaydyaghi-lab/3d/upload/main](https://github.com/zaydyaghi-lab/3d/upload/main)
-
----
-
-## Step 3 – ✅ URL already set in `index.html`
-
-`index.html` is already pointing at your uploaded model:
-
-```js
-const MODEL_URL =
-  'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/particle_ai_brain%20(2).glb';
-```
-
-No editing needed — skip straight to Step 5 to test it locally, or Step 6 to publish it.
-
----
-
-## Step 4 – (Already done for you)
-
-If you ever replace the `.glb` with a different file, open `index.html`, find the `MODEL_URL` line above, and update the filename.
-
----
-
-## Step 5 – Test locally
+## Test locally
 
 Browsers block file-to-file requests for security reasons, so you need a simple local server.  
 Pick **one** of the methods below:
@@ -106,19 +52,6 @@ Then open the URL it prints (usually <http://localhost:3000>).
 ### Option C – VS Code
 
 Install the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension, right-click `index.html` → **Open with Live Server**.
-
----
-
-## Step 6 – Deploy to GitHub Pages (free hosting)
-
-1. Merge the pull request so `index.html` is on `main` (see **Step A** at the top of this README).
-2. Go to your repository → **Settings** → **Pages** (left sidebar).
-3. Under **Source**, choose **Deploy from a branch**.
-4. Select **main** branch and **/ (root)** folder, then click **Save**.
-5. After about 60 seconds, your site will be live at:
-   ```
-   https://zaydyaghi-lab.github.io/3d/
-   ```
 
 ---
 

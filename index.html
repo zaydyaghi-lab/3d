@@ -160,15 +160,15 @@
     //  ★  PASTE YOUR GITHUB RAW URL HERE  ★
     //
     //  How to get this URL:
-    //    1. Open your repository on github.com
-    //    2. Click the .glb file you uploaded
+    //    1. Upload your .glb to this repo: https://github.com/zaydyaghi-lab/3d/upload/main
+    //    2. Click the .glb file in the repo file list
     //    3. Click the "Raw" button (top-right of the file view)
     //    4. Copy the URL from your browser address bar – it will look like:
-    //       https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/model.glb
-    //    5. Replace the string below with that URL
+    //       https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb
+    //    5. Replace YOUR-FILE-NAME below with the name of your uploaded file
     // ══════════════════════════════════════════════════════════════════════════
     const MODEL_URL =
-      'https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/model.glb';
+      'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb';
 
     // ── DOM references ─────────────────────────────────────────────────────────
     const container      = document.getElementById('canvas-container');
@@ -296,11 +296,11 @@
 
         // Build a helpful error message for the user
         let msg = 'An unknown error occurred while loading the model.';
-        if (MODEL_URL.includes('YOUR-USERNAME')) {
-          msg = 'It looks like you haven\'t replaced the placeholder URL yet. '
+        if (MODEL_URL.includes('YOUR-FILE-NAME')) {
+          msg = 'It looks like you haven\'t replaced the filename yet. '
               + 'Open index.html, find the MODEL_URL variable near the top of '
-              + 'the <script> section (look for "YOUR-USERNAME"), and paste '
-              + 'your GitHub raw URL there.';
+              + 'the <script> section (look for "YOUR-FILE-NAME"), and replace '
+              + 'it with the name of the .glb file you uploaded to this repo.';
         } else {
           msg = `Could not fetch: ${MODEL_URL}\n\n`
               + 'Common causes:\n'

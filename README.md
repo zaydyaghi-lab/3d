@@ -23,22 +23,27 @@ Features:
 
 ## Step 2 – Upload your `.glb` file
 
-1. Open your new repository on GitHub.
-2. Click **Add file** → **Upload files**.
-3. Drag your `.glb` file onto the upload area (or click **choose your files**).
-4. Scroll down and click **Commit changes**.
+### ➡️ [Click here to upload your .glb file now](https://github.com/zaydyaghi-lab/3d/upload/main)
+
+That link takes you straight to the upload page for this repository. Just:
+
+1. Drag your `.glb` file onto the upload area (or click **choose your files**).
+2. Scroll down and click **Commit changes**.
+
+> **Not working?** Make sure you are signed into GitHub first, then try the link again.
 
 ---
 
 ## Step 3 – Get the raw GitHub URL
 
-1. In your repository, click on the `.glb` file you just uploaded.
+1. After uploading, click on the `.glb` file in [this repository](https://github.com/zaydyaghi-lab/3d).
 2. Click the **Raw** button in the top-right of the file view.
 3. Copy the URL from your browser's address bar.  
-   It will look like:
+   For this repository it will look like:
    ```
-   https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/model.glb
+   https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb
    ```
+   (just replace `YOUR-FILE-NAME` with the actual name of your file)
 4. Keep this URL handy – you will paste it into `index.html` next.
 
 ---
@@ -49,14 +54,14 @@ Open `index.html` in any text editor and find this line near the top of the `<sc
 
 ```js
 const MODEL_URL =
-  'https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/model.glb';
+  'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/YOUR-FILE-NAME.glb';
 ```
 
-Replace the placeholder with your actual raw URL:
+Replace `YOUR-FILE-NAME` with the actual name of your uploaded file, for example:
 
 ```js
 const MODEL_URL =
-  'https://raw.githubusercontent.com/alice/my-3d-model/main/robot.glb';
+  'https://raw.githubusercontent.com/zaydyaghi-lab/3d/main/robot.glb';
 ```
 
 Save the file.

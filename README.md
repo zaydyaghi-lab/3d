@@ -11,6 +11,34 @@ Features:
 
 ---
 
+## ✅ Everything is already set up — here's what to do next
+
+Your model (`particle_ai_brain (2).glb`) is uploaded and `index.html` already points to it.  
+You just need two quick steps to see it live on the web:
+
+### Step A – Merge the pull request
+
+1. Go to **[Pull requests](https://github.com/zaydyaghi-lab/3d/pulls)** in this repo.
+2. Open the open PR (titled something like *"Wire up particle_ai_brain…"*).
+3. Click **Merge pull request** → **Confirm merge**.
+
+This puts the finished `index.html` onto the `main` branch alongside your `.glb`.
+
+### Step B – Turn on GitHub Pages
+
+1. Go to **Settings** → **Pages** (left sidebar of this repo).
+2. Under **Source**, choose **Deploy from a branch**.
+3. Pick **main** branch and **/ (root)** folder, then click **Save**.
+4. Wait ~60 seconds, then visit:
+
+```
+https://zaydyaghi-lab.github.io/3d/
+```
+
+Your interactive 3D brain model will be live at that URL. 🎉
+
+---
+
 ## Step 1 – Create a GitHub repository
 
 > If you already have a repository, skip to Step 2.
@@ -83,13 +111,13 @@ Install the [Live Server](https://marketplace.visualstudio.com/items?itemName=ri
 
 ## Step 6 – Deploy to GitHub Pages (free hosting)
 
-1. Upload `index.html` to your GitHub repository (same steps as uploading the `.glb`).
+1. Merge the pull request so `index.html` is on `main` (see **Step A** at the top of this README).
 2. Go to your repository → **Settings** → **Pages** (left sidebar).
 3. Under **Source**, choose **Deploy from a branch**.
 4. Select **main** branch and **/ (root)** folder, then click **Save**.
 5. After about 60 seconds, your site will be live at:
    ```
-   https://YOUR-USERNAME.github.io/YOUR-REPO/
+   https://zaydyaghi-lab.github.io/3d/
    ```
 
 ---

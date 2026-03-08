@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Model Viewer</title>
+  <style>
+    /* ─── Reset & layout ─── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a1a2e;
+      color: #eee;
+      font-family: Arial, sans-serif;
+      overflow: hidden; /* prevent scroll bars on the canvas */
+    }
+
+    /* ─── Three.js renders into this element ─── */
+    #canvas-container {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* ─── Loading overlay ─── */
+    #loading-overlay {
+      position: fixed;
+      inset: 0; /* shorthand for top/right/bottom/left: 0 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(26, 26, 46, 0.92);
+      z-index: 10;
+      gap: 16px;
+      transition: opacity 0.4s ease;
+    }
+
+    #loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Spinner animation */
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #7ec8e3;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loading-text {
+      font-size: 1.1rem;
+      color: #ccc;
+    }
+
+    /* ─── Error overlay ─── */
+    #error-overlay {
+      position: fixed;
+      inset: 0;
+      display: none; /* shown only on error */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(26, 26, 46, 0.95);
+      z-index: 20;
+      gap: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    #error-overlay.visible {
+      display: flex;
+    }
+
+    #error-title {
+      font-size: 1.5rem;
+      color: #e57373;
+    }
+
+    #error-message {
+      font-size: 0.95rem;
+      color: #bbb;
+      max-width: 480px;
+    }
+
+    /* ─── Corner hint ─── */
+    #controls-hint {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: #aaa;
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    #controls-hint.hidden {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Three.js renders here -->
+  <div id="canvas-container"></div>
+
+  <!-- Shown while the model is being fetched / parsed -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-text">Loading 3D model…</p>
+  </div>
+
+  <!-- Shown when something goes wrong -->
+  <div id="error-overlay">
+    <p id="error-title">⚠ Could not load the model</p>
+    <p id="error-message"></p>
+  </div>
+
+  <!-- Mouse-control hint that fades out after a few seconds -->
+  <div id="controls-hint">🖱 Drag to rotate &nbsp;·&nbsp; Scroll to zoom &nbsp;·&nbsp; Right-drag to pan</div>
+
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  CDN imports – no build step needed                         ║
+    ║  Three.js r169 (ES-module build served via importmap)       ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three":              "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/":      "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    // ── Imports ────────────────────────────────────────────────────────────────
+    import * as THREE              from 'three';
+    import { GLTFLoader }          from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls }       from 'three/addons/controls/OrbitControls.js';
+    import { DRACOLoader }         from 'three/addons/loaders/DRACOLoader.js';
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  ★  PASTE YOUR GITHUB RAW URL HERE  ★
+    //
+    //  How to get this URL:
+    //    1. Open your repository on github.com
+    //    2. Click the .glb file you uploaded
+    //    3. Click the "Raw" button (top-right of the file view)
+    //    4. Copy the URL from your browser address bar – it will look like:
+    //       https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/model.glb
+    //    5. Replace the string below with that URL
+    // ══════════════════════════════════════════════════════════════════════════
+    const MODEL_URL =
+      'https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/model.glb';
+
+    // ── DOM references ─────────────────────────────────────────────────────────
+    const container      = document.getElementById('canvas-container');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingText    = document.getElementById('loading-text');
+    const errorOverlay   = document.getElementById('error-overlay');
+    const errorMessage   = document.getElementById('error-message');
+    const controlsHint   = document.getElementById('controls-hint');
+
+    // ── Scene setup ────────────────────────────────────────────────────────────
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e); // dark navy background
+
+    // ── Camera ─────────────────────────────────────────────────────────────────
+    const camera = new THREE.PerspectiveCamera(
+      45,                                          // field-of-view (degrees)
+      container.clientWidth / container.clientHeight, // aspect ratio
+      0.01,                                        // near clip
+      1000                                         // far clip
+    );
+    camera.position.set(0, 1.5, 4); // pull back so the model is in view
+
+    // ── Renderer ───────────────────────────────────────────────────────────────
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // cap at 2× for performance
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.shadowMap.enabled  = true;
+    renderer.shadowMap.type     = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace   = THREE.SRGBColorSpace;
+    renderer.toneMapping        = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    container.appendChild(renderer.domElement);
+
+    // ── Lighting ───────────────────────────────────────────────────────────────
+    // Ambient light – fills shadow areas softly
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    // Main directional light (acts like the sun)
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight.position.set(5, 10, 7);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.set(2048, 2048); // sharper shadows
+    scene.add(dirLight);
+
+    // Fill light from the opposite side to avoid pitch-black faces
+    const fillLight = new THREE.DirectionalLight(0x8ab4f8, 0.4);
+    fillLight.position.set(-5, 2, -5);
+    scene.add(fillLight);
+
+    // ── OrbitControls (rotate / zoom / pan with the mouse) ────────────────────
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping  = true;  // smooth inertia
+    controls.dampingFactor  = 0.07;
+    controls.minDistance    = 0.5;   // how close you can zoom in
+    controls.maxDistance    = 100;   // how far you can zoom out
+    controls.target.set(0, 0.5, 0); // look slightly above the origin
+
+    // ── GLTF / GLB loader ─────────────────────────────────────────────────────
+    // DRACOLoader decodes Draco-compressed meshes (optional but common in GLBs)
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(
+      'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/'
+    );
+
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
+    loader.load(
+      MODEL_URL,
+
+      // ── onLoad ──────────────────────────────────────────────────────────────
+      (gltf) => {
+        const model = gltf.scene;
+
+        // ── Auto-center and auto-scale the model ────────────────────────────
+        const box    = new THREE.Box3().setFromObject(model);
+        const size   = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+
+        // Scale so the longest axis equals 2 units
+        const maxDim = Math.max(size.x, size.y, size.z);
+        if (maxDim > 0) model.scale.setScalar(2 / maxDim);
+
+        // Recompute after scaling
+        box.setFromObject(model);
+        box.getCenter(center);
+
+        // Move model so its center is at the origin
+        model.position.sub(center);
+
+        // Allow the model to cast and receive shadows
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow    = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        scene.add(model);
+
+        // Update OrbitControls target to the model's center (which is now at the origin)
+        controls.target.set(0, 0, 0);
+        controls.update();
+
+        // Hide loading overlay
+        loadingOverlay.classList.add('hidden');
+
+        // Fade out the mouse-hint after 4 seconds
+        setTimeout(() => controlsHint.classList.add('hidden'), 4000);
+      },
+
+      // ── onProgress ──────────────────────────────────────────────────────────
+      (xhr) => {
+        if (xhr.total > 0) {
+          const pct = Math.round((xhr.loaded / xhr.total) * 100);
+          loadingText.textContent = `Loading 3D model… ${pct}%`;
+        }
+      },
+
+      // ── onError ─────────────────────────────────────────────────────────────
+      (err) => {
+        console.error('GLTFLoader error:', err);
+        loadingOverlay.classList.add('hidden');
+
+        // Build a helpful error message for the user
+        let msg = 'An unknown error occurred while loading the model.';
+        if (MODEL_URL.includes('YOUR-USERNAME')) {
+          msg = 'It looks like you haven\'t replaced the placeholder URL yet. '
+              + 'Open index.html, find the MODEL_URL variable near the top of '
+              + 'the <script> section (look for "YOUR-USERNAME"), and paste '
+              + 'your GitHub raw URL there.';
+        } else {
+          msg = `Could not fetch: ${MODEL_URL}\n\n`
+              + 'Common causes:\n'
+              + '• The URL is incorrect – double-check it in your browser.\n'
+              + '• The file is not publicly accessible.\n'
+              + '• CORS is blocked – try serving this file from a local server '
+              + '(see README for instructions).';
+        }
+
+        errorMessage.textContent = msg;
+        errorOverlay.classList.add('visible');
+      }
+    );
+
+    // ── Responsive resize ─────────────────────────────────────────────────────
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    // ── Animation loop ────────────────────────────────────────────────────────
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update(); // required when damping is enabled
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
